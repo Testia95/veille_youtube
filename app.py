@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+import time
 from flask import Flask, render_template
 import feedparser
 import os
@@ -13,16 +15,30 @@ flux_list = {
 @app.route("/")
 def index():
     resultats = {}
+    now = datetime.now()
+    deux_semaines = timedelta(days=14)
+
     for nom, url in flux_list.items():
         flux = feedparser.parse(url)
         videos = []
-        for entry in flux.entries[:5]:
-            videos.append({
-                "titre": entry.title,
-                "lien": entry.link,
-                "date": entry.published
-            })
+
+        for entry in flux.entries:
+            try:
+                # Convertit la date du flux RSS en datetime
+                published = datetime.fromtimestamp(time.mktime(entry.published_parsed))
+            except Exception:
+                continue
+
+            # Vérifie si la vidéo date de moins de 14 jours
+            if now - published <= deux_semaines:
+                videos.append({
+                    "titre": entry.title,
+                    "lien": entry.link,
+                    "date": published.strftime("%d %B %Y à %Hh%M")
+                })
+
         resultats[nom] = videos
+
     return render_template("index.html", flux=resultats)
 
 # 🚨 Important pour Render : écouter sur 0.0.0.0 et le port défini par l'env

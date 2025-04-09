@@ -5,27 +5,55 @@
     <title>Veille YouTube Politique</title>
     <style>
         body {
-            font-family: sans-serif;
-            background-color: #f2f2f2;
+            background-color: #1c1b22;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
         }
+
         h1 {
-            color: #222;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #dcb4ff;
+            text-align: center;
         }
+
+        h2 {
+            color: #f4d35e;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+
         .chaine {
             margin-bottom: 40px;
         }
+
         .video {
+            background-color: #2b2935;
+            padding: 15px;
+            border-radius: 8px;
             margin-bottom: 15px;
-            padding: 10px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s;
         }
+
+        .video:hover {
+            background-color: #3a3747;
+        }
+
         a {
-            color: #0055cc;
+            color: #9bd1ff;
             text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        small {
+            color: #bbb;
         }
     </style>
 </head>
@@ -37,7 +65,7 @@
             {% for video in videos %}
                 <div class="video">
                     <strong>{{ video.titre }}</strong><br>
-                    <a href="{{ video.lien }}" target="_blank">Voir sur YouTube</a><br>
+                    <a href="{{ video.lien }}" target="_blank">📺 Voir sur YouTube</a><br>
                     <small>📅 {{ video.date }}</small>
                 </div>
             {% endfor %}

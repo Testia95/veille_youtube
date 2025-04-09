@@ -16,7 +16,7 @@ flux_list = {
 def index():
     resultats = {}
     now = datetime.now()
-    deux_semaines = timedelta(days=14)
+    deux_semaines = timedelta(days=14)  # ⏳ Filtrer sur les 14 derniers jours
 
     for nom, url in flux_list.items():
         flux = feedparser.parse(url)
@@ -24,24 +24,32 @@ def index():
 
         for entry in flux.entries:
             try:
-                # Convertit la date du flux RSS en datetime
+                # 🕒 Convertit la date RSS en objet datetime
                 published = datetime.fromtimestamp(time.mktime(entry.published_parsed))
             except Exception:
                 continue
 
-            # Vérifie si la vidéo date de moins de 14 jours
+            # ✅ Garde uniquement les vidéos récentes
             if now - published <= deux_semaines:
+                # 🔍 Extrait l'ID de la vidéo depuis l'URL
+                video_id = entry.link.split("v=")[-1]
+
+                # 📦 Création du dictionnaire de données vidéo avec miniature + iframe
                 videos.append({
                     "titre": entry.title,
                     "lien": entry.link,
-                    "date": published.strftime("%d %B %Y à %Hh%M")
+                    "date": published.strftime("%d %B %Y à %Hh%M"),
+                    "thumbnail": f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
+                    "embed": f"https://www.youtube.com/embed/{video_id}"
                 })
 
+        # 📂 Ajoute les vidéos de la chaîne au résultat global
         resultats[nom] = videos
 
+    # 📤 Envoie le tout au template HTML
     return render_template("index.html", flux=resultats)
 
-# 🚨 Important pour Render : écouter sur 0.0.0.0 et le port défini par l'env
+# 🧠 Render impose d’utiliser son port → on le récupère depuis l’environnement
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
